@@ -26,3 +26,20 @@ type Producer interface {
 	// resource.
 	Read() []*metricdata.Metric
 }
+
+// ProducerSet is a collection of Producers that are exported together.
+type ProducerSet struct {
+	producers []Producer
+}
+
+var defaultProducerSet = &ProducerSet{}
+
+// DefaultProducerSet returns a global default producer set.
+func DefaultProducerSet() *ProducerSet {
+	return defaultProducerSet
+}
+
+// AddProducer adds the given producer to be exported on this producer set.
+func (ps *ProducerSet) AddProducer(p Producer) {
+	ps.producers = append(ps.producers, p)
+}

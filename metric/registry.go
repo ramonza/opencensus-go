@@ -16,6 +16,7 @@ package metric
 
 import (
 	"go.opencensus.io/metric/metricdata"
+	"go.opencensus.io/metric/metricexport"
 	"log"
 	"time"
 )
@@ -71,11 +72,24 @@ func (r *Registry) initGauge(g *gauge, labelKeys []string, name string, descript
 	return g
 }
 
-// ReadAll reads all gauges in this registry and returns their values as metrics.
-func (r *Registry) ReadAll() []*metricdata.Metric {
+// Read reads all gauges in this registry and returns their values as metrics.
+func (r *Registry) Read() []*metricdata.Metric {
 	ms := make([]*metricdata.Metric, 0, len(r.gauges))
 	for _, g := range r.gauges {
 		ms = append(ms, g.read())
 	}
 	return ms
+}
+
+var defaultReg *Registry
+
+func init() {
+	defaultReg = NewRegistry()
+	metricexport.DefaultProducerSet().AddProducer(defaultReg)
+}
+
+// DefaultRegistry returns a global default Registry that is added to the
+// default producer set for export.
+func DefaultRegistry() *Registry {
+	return defaultReg
 }

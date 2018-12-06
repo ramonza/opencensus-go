@@ -15,11 +15,15 @@
 
 package stats
 
+import (
+	"go.opencensus.io/metric/metricdata"
+)
+
 // Units are encoded according to the case-sensitive abbreviations from the
 // Unified Code for Units of Measure: http://unitsofmeasure.org/ucum.html
 const (
-	UnitNone          = "1" // Deprecated: Use UnitDimensionless.
-	UnitDimensionless = "1"
-	UnitBytes         = "By"
-	UnitMilliseconds  = "ms"
+	UnitDimensionless = string(metricdata.UnitDimensionless)
+	UnitBytes         = string(metricdata.UnitBytes)
+	UnitMilliseconds  = string(metricdata.UnitMilliseconds)
+	UnitNone          = UnitDimensionless // Deprecated: Use metric.UnitDimesionless.
 )
