@@ -31,7 +31,7 @@ func TestGauge(t *testing.T) {
 	f.GetEntry(metricdata.NewLabelValue("k1v1"), metricdata.LabelValue{}).Add(1)
 	f.GetEntry(metricdata.NewLabelValue("k1v1"), metricdata.LabelValue{}).Add(1)
 	f.GetEntry(metricdata.NewLabelValue("k1v2"), metricdata.NewLabelValue("k2v2")).Add(1)
-	m := r.ReadAll()
+	m := r.Read()
 	want := []*metricdata.Metric{
 		{
 			Descriptor: metricdata.Descriptor{
@@ -79,17 +79,17 @@ func TestFloat64Entry_Add(t *testing.T) {
 	r := NewRegistry()
 	g := r.AddFloat64Gauge("g", "", metricdata.UnitDimensionless)
 	g.GetEntry().Add(0)
-	ms := r.ReadAll()
+	ms := r.Read()
 	if got, want := ms[0].TimeSeries[0].Points[0].Value.(float64), 0.0; got != want {
 		t.Errorf("value = %v, want %v", got, want)
 	}
 	g.GetEntry().Add(1)
-	ms = r.ReadAll()
+	ms = r.Read()
 	if got, want := ms[0].TimeSeries[0].Points[0].Value.(float64), 1.0; got != want {
 		t.Errorf("value = %v, want %v", got, want)
 	}
 	g.GetEntry().Add(-1)
-	ms = r.ReadAll()
+	ms = r.Read()
 	if got, want := ms[0].TimeSeries[0].Points[0].Value.(float64), 0.0; got != want {
 		t.Errorf("value = %v, want %v", got, want)
 	}
@@ -99,7 +99,7 @@ func TestFloat64Gauge_Add_NegativeTotals(t *testing.T) {
 	r := NewRegistry()
 	g := r.AddFloat64Gauge("g", "", metricdata.UnitDimensionless)
 	g.GetEntry().Add(-1.0)
-	ms := r.ReadAll()
+	ms := r.Read()
 	if got, want := ms[0].TimeSeries[0].Points[0].Value.(float64), float64(0); got != want {
 		t.Errorf("value = %v, want %v", got, want)
 	}
@@ -109,12 +109,12 @@ func TestInt64GaugeEntry_Add(t *testing.T) {
 	r := NewRegistry()
 	g := r.AddInt64Gauge("g", "", metricdata.UnitDimensionless)
 	g.GetEntry().Add(0)
-	ms := r.ReadAll()
+	ms := r.Read()
 	if got, want := ms[0].TimeSeries[0].Points[0].Value.(int64), int64(0); got != want {
 		t.Errorf("value = %v, want %v", got, want)
 	}
 	g.GetEntry().Add(1)
-	ms = r.ReadAll()
+	ms = r.Read()
 	if got, want := ms[0].TimeSeries[0].Points[0].Value.(int64), int64(1); got != want {
 		t.Errorf("value = %v, want %v", got, want)
 	}
@@ -124,7 +124,7 @@ func TestInt64Gauge_Add_NegativeTotals(t *testing.T) {
 	r := NewRegistry()
 	g := r.AddInt64Gauge("g", "", metricdata.UnitDimensionless)
 	g.GetEntry().Add(-1)
-	ms := r.ReadAll()
+	ms := r.Read()
 	if got, want := ms[0].TimeSeries[0].Points[0].Value.(int64), int64(0); got != want {
 		t.Errorf("value = %v, want %v", got, want)
 	}

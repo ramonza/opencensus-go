@@ -11,19 +11,32 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
 
-package stats
+package metricexport
 
 import (
 	"go.opencensus.io/metric/metricdata"
+	"testing"
 )
 
-// Units are encoded according to the case-sensitive abbreviations from the
-// Unified Code for Units of Measure: http://unitsofmeasure.org/ucum.html
-const (
-	UnitDimensionless = string(metricdata.UnitDimensionless)
-	UnitBytes         = string(metricdata.UnitBytes)
-	UnitMilliseconds  = string(metricdata.UnitMilliseconds)
-	UnitNone          = UnitDimensionless // Deprecated: Use metric.UnitDimesionless.
-)
+func TestProducerSet_AddProducer(t *testing.T) {
+	ps := &ProducerSet{}
+	ps.AddProducer(&constProducer{[]*metricdata.Metric{
+		{Descriptor: metricdata.Descriptor{Name: "m1"}},
+	}})
+	ps.AddProducer(&constProducer{[]*metricdata.Metric{
+		{Descriptor: metricdata.Descriptor{Name: "m2"}},
+	}})
+	ms := ps.ReadAll()
+	if got, want := len(ms), 2; got != want {
+		t.Fatalf("len(ms) = %d; want %d", got, want)
+	}
+}
+
+type constProducer struct {
+	ms []*metricdata.Metric
+}
+
+func (c *constProducer) Read() []*metricdata.Metric {
+	return c.ms
+}

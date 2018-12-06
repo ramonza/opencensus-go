@@ -17,6 +17,7 @@ package view
 
 import (
 	"fmt"
+	"go.opencensus.io/metric/metricexport"
 	"time"
 
 	"go.opencensus.io/stats"
@@ -26,8 +27,9 @@ import (
 
 func init() {
 	defaultWorker = newWorker()
-	go defaultWorker.start()
+	metricexport.DefaultProducerSet().AddProducer(defaultWorker)
 	internal.DefaultRecorder = record
+	go defaultWorker.start()
 }
 
 type measureRef struct {
